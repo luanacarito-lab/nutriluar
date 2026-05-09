@@ -1,73 +1,65 @@
-# React + TypeScript + Vite
+# 🌙 NutriLuar — Sistema de Gestão Nutricional
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+O **NutriLuar** é uma plataforma moderna e elegante projetada para nutricionistas que buscam simplificar o acompanhamento de seus pacientes. O sistema oferece uma interface intuitiva para gestão de consultas, evolução antropométrica e organização de dados clínicos, tudo com um design acolhedor e profissional inspirado na natureza.
 
-Currently, two official plugins are available:
+## 🚀 Funcionalidades Principais
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+### 📋 Gestão de Pacientes
+- Cadastro completo de dados pessoais, clínicos e hábitos.
+- Listagem dinâmica com busca e filtros.
+*   **Perfil Individual**: Centralização de todas as informações do paciente em um só lugar.
 
-## React Compiler
+### 📈 Acompanhamento e Evolução
+- **Registro de Consultas**: Adição rápida de peso, medidas (cintura, quadril), % de gordura e observações.
+- **Gráficos Dinâmicos**: Visualização clara da evolução do peso e outras métricas corporais ao longo do tempo.
+- **Cálculo Inteligente de IMC**: Suporte a diversos formatos de entrada (vírgulas, pontos, cm ou metros).
+- **Dashboard de Consultas**: Resumo automático com última consulta, peso atual e diferença total de peso desde o início.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### 🔐 Segurança e Dados
+- **Autenticação Segura**: Acesso restrito a nutricionistas via Supabase Auth.
+- **Isolamento de Dados (RLS)**: Cada nutricionista visualiza apenas os seus próprios pacientes e consultas.
+- **Persistência em Nuvem**: Dados salvos em tempo real no banco de dados PostgreSQL do Supabase.
 
-## Expanding the ESLint configuration
+## 🛠️ Tecnologias Utilizadas
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **Frontend**: React 19 + TypeScript
+- **Build & Tooling**: Vite
+- **Estilização**: CSS Vanilla (Design System Personalizado)
+- **Banco de Dados & Auth**: Supabase (PostgreSQL)
+- **Gráficos**: Recharts
+- **Ícones**: Lucide React
+- **Roteamento**: React Router
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## 💻 Como Iniciar o Projeto
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+1.  **Clone o repositório:**
+    ```bash
+    git clone https://github.com/luanacarito-lab/nutriluar.git
+    cd nutriluar
+    ```
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+2.  **Instale as dependências:**
+    ```bash
+    npm install
+    ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+3.  **Configure as variáveis de ambiente:**
+    Crie um arquivo `.env` na raiz do projeto com suas chaves do Supabase:
+    ```env
+    VITE_SUPABASE_URL=sua_url_do_supabase
+    VITE_SUPABASE_ANON_KEY=sua_chave_anonima
+    ```
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+4.  **Inicie o servidor de desenvolvimento:**
+    ```bash
+    npm run dev
+    ```
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## 🌐 Deploy
+
+O projeto está configurado para deploy em plataformas como **Vercel** ou **Netlify**. 
+Para evitar erros 404 ao atualizar páginas em sub-rotas, incluímos os arquivos de configuração `vercel.json` e `_redirects`.
+
+---
+
+Desenvolvido com ❤️ por Luana Carito Lab.
