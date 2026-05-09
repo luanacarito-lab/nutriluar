@@ -168,7 +168,14 @@ const PatientProfile: React.FC = () => {
   };
 
   const stats = useMemo(() => {
-    if (!patient) return null;
+    if (!patient) return {
+      lastDate: '-',
+      nextReturnDate: '-',
+      currentWeight: null,
+      initialWeight: null,
+      weightDiff: null,
+      chartData: []
+    };
 
     const lastConsultation = consultations[0];
     

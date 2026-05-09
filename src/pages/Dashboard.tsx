@@ -127,7 +127,7 @@ const Dashboard: React.FC = () => {
             description="Agendadas para esta semana"
           />
           <PatientListCard 
-            patients={stats.stats?.patientsWithoutReturn || stats.patientsWithoutReturn} 
+            patients={stats.patientsWithoutReturn} 
             loading={loading} 
           />
         </div>
