@@ -68,7 +68,7 @@ body {
   position: relative;
   overflow-x: hidden;
   transition: background-color 0.8s ease, color 0.5s ease;
-  cursor: none; /* Cursor customizado */
+   /* Cursor customizado */
 }
 
 /* Fundo Global com Imagem Real */
@@ -110,9 +110,11 @@ body {
   100% { transform: translate(30px, -30px) scale(1.1); }
 }
 
-/* Estilo para links e botÃµes com cursor customizado */
-button, a, input, select, textarea {
-  cursor: none;
+/* Estilo para links e botões com cursor customizado (apenas desktop) */
+@media (min-width: 1025px) {
+  button, a, input, select, textarea, .clickable {
+    
+  }
 }
 
 @keyframes bgFlow {
@@ -205,7 +207,7 @@ a:hover {
   font-weight: 600;
   box-shadow: var(--shadow-glow);
   transition: var(--transition);
-  cursor: none;
+  
 }
 
 .btn-primary:hover {
@@ -222,7 +224,7 @@ a:hover {
   font-weight: 600;
   backdrop-filter: var(--glass-blur);
   transition: var(--transition);
-  cursor: none;
+  
 }
 
 .btn-secondary:hover {
@@ -458,7 +460,7 @@ a:hover {
   border-radius: var(--radius-md);
   font-weight: 600;
   transition: var(--transition);
-  cursor: none;
+  
 }
 
 .btn-logout.premium-logout:hover {
@@ -655,7 +657,7 @@ a:hover {
 
 .patients-table tr:hover td {
   background-color: rgba(244, 241, 236, 0.4);
-  cursor: none;
+  
 }
 
 /* Badges */
@@ -698,7 +700,7 @@ a:hover {
   background: none;
   border: none;
   color: var(--color-accent);
-  cursor: none;
+  
   padding: 8px;
   border-radius: 50%;
   transition: var(--transition);
@@ -790,7 +792,7 @@ a:hover {
   padding: 10px 18px;
   border-radius: var(--radius-md);
   border: 1px solid var(--color-border);
-  cursor: none;
+  
   transition: var(--transition);
   font-weight: 500;
   box-shadow: 0 2px 5px rgba(0,0,0,0.02);
@@ -826,7 +828,7 @@ a:hover {
   border-radius: var(--radius-md);
   font-family: var(--font-main);
   font-weight: 600;
-  cursor: none;
+  
   transition: var(--transition);
 }
 
@@ -852,7 +854,7 @@ a:hover {
     grid-template-columns: 1fr;
   }
 
-  .sidebar {
+  .sidebar:not(.mobile) {
     display: none;
   }
 
@@ -942,7 +944,7 @@ a:hover {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  cursor: none;
+  
   background-color: var(--color-white);
 }
 
@@ -1090,7 +1092,7 @@ a:hover {
   background: none;
   border: none;
   color: var(--color-text-muted);
-  cursor: none;
+  
   padding: 5px;
   border-radius: 50%;
   display: flex;
@@ -1420,7 +1422,7 @@ a:hover {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  cursor: none;
+  
   transition: var(--transition);
   border-right: 1px solid var(--color-border-soft);
 }
@@ -1579,7 +1581,7 @@ a:hover {
   font-weight: 600;
   color: var(--color-accent);
   transition: var(--transition);
-  cursor: none;
+  
 }
 
 .slot-button:hover {
@@ -1607,7 +1609,11 @@ a:hover {
   background: transparent;
   border: none;
   color: var(--color-accent);
-  cursor: none;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 }
 
 .mobile-sidebar-overlay {
@@ -1647,10 +1653,27 @@ a:hover {
 }
 
 .stat-card.clickable {
-  cursor: none;
+  
   transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .stat-card.clickable:active {
   transform: scale(0.95);
+}
+
+/* Ajustes Finais Mobile e Cursor */
+@media (max-width: 1024px) {
+  * {
+    cursor: auto !important;
+  }
+  
+  .custom-cursor {
+    display: none !important;
+  }
+  
+  .sidebar.premium-sidebar.mobile {
+    height: 100vh;
+    padding: 20px;
+    background: var(--color-surface-solid);
+  }
 }

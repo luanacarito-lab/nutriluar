@@ -27,6 +27,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isMobile, onClose }) => {
         <NavLink 
           to="/dashboard" 
           className={({ isActive }) => isActive ? "nav-item active premium-nav" : "nav-item"}
+          onClick={() => isMobile && onClose && onClose()}
         >
           <LayoutDashboard size={20} />
           <span>📊 Dashboard</span>
@@ -34,6 +35,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isMobile, onClose }) => {
         <NavLink 
           to="/pacientes" 
           className={({ isActive }) => isActive ? "nav-item active premium-nav" : "nav-item"}
+          onClick={() => isMobile && onClose && onClose()}
         >
           <Users size={20} />
           <span>👥 Pacientes</span>
@@ -41,6 +43,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isMobile, onClose }) => {
         <NavLink 
           to="/agenda" 
           className={({ isActive }) => isActive ? "nav-item active premium-nav" : "nav-item"}
+          onClick={() => isMobile && onClose && onClose()}
         >
           <Calendar size={20} />
           <span>📅 Agenda</span>

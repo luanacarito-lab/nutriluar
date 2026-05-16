@@ -327,6 +327,18 @@ const PatientProfile: React.FC = () => {
               <p className="text-muted" style={{ marginTop: '5px' }}>
                 ID: {id?.substring(0, 8)} • Cadastrado em {formatLocalDate(patient.created_at)}
               </p>
+              <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
+                {patient.possui_deficiencia && (
+                  <span className="badge-premium-accent" style={{ background: 'rgba(230, 100, 100, 0.1)', color: '#d64d4d', border: '1px solid rgba(230, 100, 100, 0.2)' }}>
+                    ♿ Possui Deficiência: {patient.tipo_deficiencia}
+                  </span>
+                )}
+                {(patient.alergias_texto || (patient.alergias && patient.alergias.length > 0)) && (
+                  <span className="badge-premium-accent" style={{ background: 'rgba(255, 165, 0, 0.1)', color: '#cc8400', border: '1px solid rgba(255, 165, 0, 0.2)' }}>
+                    ⚠️ Alergias: {patient.alergias_texto || patient.alergias.join(', ')}
+                  </span>
+                )}
+              </div>
             </div>
           </div>
           
