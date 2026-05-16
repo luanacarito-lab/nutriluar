@@ -5,11 +5,15 @@ interface StatCardProps {
   value: number | string;
   description?: string;
   loading?: boolean;
+  onClick?: () => void;
 }
 
-const StatCard: React.FC<StatCardProps> = ({ label, value, description, loading }) => {
+const StatCard: React.FC<StatCardProps> = ({ label, value, description, loading, onClick }) => {
   return (
-    <div className="stat-card">
+    <div 
+      className={`stat-card ${onClick ? 'clickable' : ''}`} 
+      onClick={onClick}
+    >
       <span className="stat-label">{label}</span>
       {loading ? (
         <div className="stat-value">...</div>

@@ -4,6 +4,7 @@ import { Search, UserPlus } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import Sidebar from '../components/Sidebar';
+import Header from '../components/Header';
 import Badge from '../components/Badge';
 import { formatLocalDate } from '../utils/dateUtils';
 
@@ -58,6 +59,7 @@ const Patients: React.FC = () => {
 
   return (
     <div className="dashboard-container">
+      <Header />
       <Sidebar />
       <main className="main-content">
         <header className="page-header">

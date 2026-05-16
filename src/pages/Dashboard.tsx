@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
 import Sidebar from '../components/Sidebar';
+import Header from '../components/Header';
 import StatCard from '../components/StatCard';
 import PatientListCard from '../components/PatientListCard';
 import { formatLocalDate, getTodayString } from '../utils/dateUtils';
 
 const Dashboard: React.FC = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [profile, setProfile] = useState<any>(null);
   const [stats, setStats] = useState({
     totalPatients: 0,
@@ -120,6 +123,7 @@ const Dashboard: React.FC = () => {
 
   return (
     <div className="dashboard-container">
+      <Header />
       <Sidebar />
       
       <main className="main-content">
@@ -134,12 +138,14 @@ const Dashboard: React.FC = () => {
             value={stats.totalPatients} 
             loading={loading}
             description="Total de pacientes cadastrados"
+            onClick={() => navigate('/pacientes')}
           />
           <StatCard 
             label="Consultas da Semana" 
             value={stats.consultationsThisWeek} 
             loading={loading}
             description="Agendadas para esta semana"
+            onClick={() => navigate('/agenda')}
           />
           <PatientListCard 
             patients={stats.patientsWithoutReturn} 

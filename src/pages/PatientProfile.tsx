@@ -19,6 +19,7 @@ import {
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import Sidebar from '../components/Sidebar';
+import Header from '../components/Header';
 import PatientDataForm from '../components/PatientDataForm';
 import EvolutionChart from '../components/EvolutionChart';
 import ConsultationModal from '../components/ConsultationModal';
@@ -296,16 +297,18 @@ const PatientProfile: React.FC = () => {
 
   if (loading) return (
     <div className="dashboard-container">
+      <Header />
       <Sidebar />
       <main className="main-content">
         <PremiumLoading message="Carregando perfil do paciente..." />
       </main>
     </div>
   );
-  if (error) return <div className="dashboard-container"><Sidebar /><main className="main-content"><div className="error-message">{error}</div></main></div>;
+  if (error) return <div className="dashboard-container"><Header /><Sidebar /><main className="main-content"><div className="error-message">{error}</div></main></div>;
 
   return (
     <div className="dashboard-container">
+      <Header />
       <Sidebar />
       <main className="main-content premium-fade-in">
         <header className="page-header premium-profile-header">

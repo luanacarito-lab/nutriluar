@@ -4,12 +4,24 @@ import { LayoutDashboard, Users, LogOut, Calendar, Utensils } from 'lucide-react
 import { useAuth } from '../contexts/AuthContext';
 import Logo from './Logo';
 
-const Sidebar: React.FC = () => {
+interface SidebarProps {
+  isMobile?: boolean;
+  onClose?: () => void;
+}
+
+const Sidebar: React.FC<SidebarProps> = ({ isMobile, onClose }) => {
   const { signOut } = useAuth();
 
   return (
-    <aside className="sidebar premium-sidebar">
-      <Logo />
+    <aside className={`sidebar premium-sidebar ${isMobile ? 'mobile' : ''}`}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Logo />
+        {isMobile && (
+          <button className="btn-icon" onClick={onClose} style={{ color: 'var(--color-text)' }}>
+            <LogOut size={20} style={{ transform: 'rotate(180deg)' }} />
+          </button>
+        )}
+      </div>
       
       <nav className="sidebar-nav">
         <NavLink 

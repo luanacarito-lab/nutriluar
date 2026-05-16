@@ -16,6 +16,7 @@ import {
 import { ptBR } from 'date-fns/locale';
 import { ChevronLeft, ChevronRight, Plus, Calendar as CalendarIcon, Clock, User, MessageSquare } from 'lucide-react';
 import Sidebar from '../components/Sidebar';
+import Header from '../components/Header';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import PremiumLoading from '../components/PremiumLoading';
@@ -180,6 +181,7 @@ const Agenda: React.FC = () => {
 
   if (loading && events.length === 0) return (
     <div className="dashboard-container">
+      <Header />
       <Sidebar />
       <main className="main-content">
         <PremiumLoading message="Preparando sua agenda..." />
@@ -189,6 +191,7 @@ const Agenda: React.FC = () => {
 
   return (
     <div className="dashboard-container">
+      <Header />
       <Sidebar />
       <main className="main-content premium-fade-in">
         <header className="page-header premium-profile-header">

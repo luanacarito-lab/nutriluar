@@ -40,6 +40,10 @@ const PatientDataForm: React.FC<PatientDataFormProps> = ({
     atividade_fisica: false,
     atividade_fisica_descricao: '',
     observacoes: '',
+    possui_deficiencia: false,
+    tipo_deficiencia: '',
+    alergias_texto: '',
+    restricoes_texto: '',
   });
 
   useEffect(() => {
@@ -54,6 +58,10 @@ const PatientDataForm: React.FC<PatientDataFormProps> = ({
         patologias: initialData.patologias || [],
         restricoes_alimentares: initialData.restricoes_alimentares || [],
         alergias: initialData.alergias || [],
+        possui_deficiencia: initialData.possui_deficiencia || false,
+        tipo_deficiencia: initialData.tipo_deficiencia || '',
+        alergias_texto: initialData.alergias_texto || '',
+        restricoes_texto: initialData.restricoes_texto || '',
       });
     }
   }, [initialData]);
@@ -207,10 +215,33 @@ const PatientDataForm: React.FC<PatientDataFormProps> = ({
                 </select>
               </div>
             </div>
-            <div className="form-group">
-              <label>Patologias / Condições</label>
-              <textarea name="medicamentos" value={formData.medicamentos} onChange={handleInputChange} className="input-field" placeholder="Medicamentos em uso" rows={2}></textarea>
-              <textarea name="suplementos" value={formData.suplementos} onChange={handleInputChange} className="input-field" placeholder="Suplementos em uso" rows={2} style={{ marginTop: '10px' }}></textarea>
+              <div className="form-group">
+                <label>Patologias / Condições</label>
+                <textarea name="medicamentos" value={formData.medicamentos} onChange={handleInputChange} className="input-field" placeholder="Medicamentos em uso" rows={2}></textarea>
+                <textarea name="suplementos" value={formData.suplementos} onChange={handleInputChange} className="input-field" placeholder="Suplementos em uso" rows={2} style={{ marginTop: '10px' }}></textarea>
+              </div>
+            </div>
+
+            <h3 className="form-section-title">Acessibilidade e Limitações</h3>
+            <div className="form-group" style={{ marginBottom: '20px' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}>
+                <input type="checkbox" name="possui_deficiencia" checked={formData.possui_deficiencia} onChange={handleInputChange} />
+                Possui alguma deficiência?
+              </label>
+              {formData.possui_deficiencia && (
+                <textarea name="tipo_deficiencia" value={formData.tipo_deficiencia} onChange={handleInputChange} className="input-field" placeholder="Qual(is) deficiência(s)?" rows={2} style={{ marginTop: '10px' }}></textarea>
+              )}
+            </div>
+
+            <div className="form-grid">
+              <div className="form-group">
+                <label>Alergias Alimentares</label>
+                <textarea name="alergias_texto" value={formData.alergias_texto} onChange={handleInputChange} className="input-field" placeholder="Ex: Glúten, Lactose, Amendoim..." rows={2}></textarea>
+              </div>
+              <div className="form-group">
+                <label>Restrições / Preferências</label>
+                <textarea name="restricoes_texto" value={formData.restricoes_texto} onChange={handleInputChange} className="input-field" placeholder="Ex: Vegano, Não gosta de coentro..." rows={2}></textarea>
+              </div>
             </div>
           </div>
         )}

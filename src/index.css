@@ -1588,3 +1588,69 @@ a:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-soft);
 }
+
+/* Estilos para Mobile Nav */
+.mobile-header {
+  display: none;
+  padding: 15px 20px;
+  background: var(--color-surface-solid);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--color-border-soft);
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 1001;
+}
+
+.mobile-menu-btn {
+  background: transparent;
+  border: none;
+  color: var(--color-accent);
+  cursor: none;
+}
+
+.mobile-sidebar-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(5px);
+  z-index: 1002;
+  animation: fadeIn 0.3s ease;
+}
+
+.mobile-sidebar-content {
+  width: 280px;
+  height: 100%;
+  background: var(--color-surface-solid);
+  animation: slideInLeft 0.3s ease;
+}
+
+.sidebar.premium-sidebar.mobile {
+  width: 100%;
+  box-shadow: none;
+  border-right: none;
+}
+
+@keyframes slideInLeft {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+
+@media (max-width: 1024px) {
+  .mobile-header {
+    display: flex;
+  }
+}
+
+.stat-card.clickable {
+  cursor: none;
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.stat-card.clickable:active {
+  transform: scale(0.95);
+}

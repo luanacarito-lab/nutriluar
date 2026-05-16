@@ -41,14 +41,23 @@ export default async function handler(req, res) {
       .map(c => `${c.data_consulta}: ${c.peso}kg`)
       .join(', ') || 'Nenhuma consulta registrada';
 
-    const prompt = `Você é um nutricionista especialista. Gere um plano alimentar semanal (7 dias) para o paciente: ${patientData.nome}.
+    const prompt = `Você é um nutricionista clínico especialista. Gere um plano alimentar semanal (7 dias) personalizado para o paciente: ${patientData.nome}.
     
-    Dados do Paciente:
+    PERFIL CRÍTICO DO PACIENTE (RESPEITE RIGOROSAMENTE):
     - Idade: ${formatValue(patientData.idade)}
-    - Objetivos: ${formatValue(patientData.objetivos?.join(', '))}
-    - Restrições: ${formatValue(patientData.restricoes_alimentares?.join(', '))}
-    - Alergias: ${formatValue(patientData.alergias?.join(', '))}
-    - Histórico de Peso: ${evolucaoPeso}
+    - Objetivos: ${formatValue(patientData.objetivos?.join(', '))} ${formatValue(patientData.objetivo_texto)}
+    - Deficiência: ${patientData.possui_deficiencia ? `Sim (${patientData.tipo_deficiencia})` : 'Não informada'}
+    - Alergias Alimentares: ${formatValue(patientData.alergias_texto)}
+    - Restrições e Preferências: ${formatValue(patientData.restricoes_texto)}
+    - Patologias: ${formatValue(patientData.patologias?.join(', '))}
+    - Medicamentos/Suplementos: ${formatValue(patientData.medicamentos)} / ${formatValue(patientData.suplementos)}
+    - Histórico de Evolução: ${evolucaoPeso}
+
+    REGRAS DE GERAÇÃO:
+    1. PROIBIDO sugerir alimentos que causem alergia ao paciente.
+    2. Adaptar consistência e facilidade de preparo caso o paciente possua deficiências que impactem a alimentação.
+    3. Respeitar as preferências e restrições (ex: se for vegano, não sugerir carne).
+    4. O plano deve ser equilibrado e focado nos objetivos citados.
 
     ESTRUTURA OBRIGATÓRIA (JSON puro, sem markdown):
     {
