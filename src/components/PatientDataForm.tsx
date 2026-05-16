@@ -220,7 +220,6 @@ const PatientDataForm: React.FC<PatientDataFormProps> = ({
                 <textarea name="medicamentos" value={formData.medicamentos} onChange={handleInputChange} className="input-field" placeholder="Medicamentos em uso" rows={2}></textarea>
                 <textarea name="suplementos" value={formData.suplementos} onChange={handleInputChange} className="input-field" placeholder="Suplementos em uso" rows={2} style={{ marginTop: '10px' }}></textarea>
               </div>
-            </div>
 
             <h3 className="form-section-title">Acessibilidade e Limitações</h3>
             <div className="form-group" style={{ marginBottom: '20px' }}>
