@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { X, Save } from 'lucide-react';
+import { getTodayString } from '../utils/dateUtils';
 
 interface ConsultationModalProps {
   isOpen: boolean;
@@ -17,7 +18,7 @@ const ConsultationModal: React.FC<ConsultationModalProps> = ({
   loading = false 
 }) => {
   const [formData, setFormData] = useState({
-    data_consulta: new Date().toISOString().split('T')[0],
+    data_consulta: getTodayString(),
     peso: '',
     cintura: '',
     quadril: '',
@@ -29,7 +30,7 @@ const ConsultationModal: React.FC<ConsultationModalProps> = ({
   useEffect(() => {
     if (initialData) {
       setFormData({
-        data_consulta: initialData.data_consulta || new Date().toISOString().split('T')[0],
+        data_consulta: initialData.data_consulta || getTodayString(),
         peso: initialData.peso?.toString() || '',
         cintura: initialData.cintura?.toString() || '',
         quadril: initialData.quadril?.toString() || '',
@@ -39,7 +40,7 @@ const ConsultationModal: React.FC<ConsultationModalProps> = ({
       });
     } else {
       setFormData({
-        data_consulta: new Date().toISOString().split('T')[0],
+        data_consulta: getTodayString(),
         peso: '',
         cintura: '',
         quadril: '',

@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, Users, LogOut } from 'lucide-react';
+import { LayoutDashboard, Users, LogOut, Calendar, Utensils } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import Logo from './Logo';
 
@@ -8,30 +8,37 @@ const Sidebar: React.FC = () => {
   const { signOut } = useAuth();
 
   return (
-    <aside className="sidebar">
+    <aside className="sidebar premium-sidebar">
       <Logo />
       
       <nav className="sidebar-nav">
         <NavLink 
           to="/dashboard" 
-          className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}
+          className={({ isActive }) => isActive ? "nav-item active premium-nav" : "nav-item"}
         >
-          <LayoutDashboard />
-          Dashboard
+          <LayoutDashboard size={20} />
+          <span>📊 Dashboard</span>
         </NavLink>
         <NavLink 
           to="/pacientes" 
-          className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}
+          className={({ isActive }) => isActive ? "nav-item active premium-nav" : "nav-item"}
         >
-          <Users />
-          Pacientes
+          <Users size={20} />
+          <span>👥 Pacientes</span>
+        </NavLink>
+        <NavLink 
+          to="/agenda" 
+          className={({ isActive }) => isActive ? "nav-item active premium-nav" : "nav-item"}
+        >
+          <Calendar size={20} />
+          <span>📅 Agenda</span>
         </NavLink>
       </nav>
 
       <footer className="sidebar-footer">
-        <button onClick={signOut} className="btn-logout">
-          <LogOut />
-          Sair do Sistema
+        <button onClick={signOut} className="btn-logout premium-logout">
+          <LogOut size={18} />
+          <span>🚪 Sair do Sistema</span>
         </button>
       </footer>
     </aside>

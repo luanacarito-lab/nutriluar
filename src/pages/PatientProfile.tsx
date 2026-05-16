@@ -22,6 +22,10 @@ import Sidebar from '../components/Sidebar';
 import PatientDataForm from '../components/PatientDataForm';
 import EvolutionChart from '../components/EvolutionChart';
 import ConsultationModal from '../components/ConsultationModal';
+import MealPlanDisplay from '../components/MealPlanDisplay';
+import MealPlanHistory from '../components/MealPlanHistory';
+import PremiumLoading from '../components/PremiumLoading';
+import { formatLocalDate, calculateAge } from '../utils/dateUtils';
 
 const PatientProfile: React.FC = () => {
   const { id } = useParams();
@@ -39,6 +43,12 @@ const PatientProfile: React.FC = () => {
   const [editingConsultation, setEditingConsultation] = useState<any>(null);
   const [saveLoading, setSaveLoading] = useState(false);
   
+  // AI Plan states
+  const [plansHistory, setPlansHistory] = useState<any[]>([]);
+  const [generatedPlan, setGeneratedPlan] = useState<any>(null);
+  const [aiLoading, setAiLoading] = useState(false);
+  const [viewingPlan, setViewingPlan] = useState<any>(null);
+
   // Expanded cards state
   const [expandedCards, setExpandedCards] = useState<string[]>([]);
 
@@ -70,6 +80,16 @@ const PatientProfile: React.FC = () => {
       
       if (consultationsError) throw consultationsError;
       setConsultations(consultationsData || []);
+
+      // Fetch meal plans history
+      const { data: plansData, error: plansError } = await supabase
+        .from('planos_alimentares')
+        .select('*')
+        .eq('paciente_id', id)
+        .order('created_at', { ascending: false });
+      
+      if (plansError) throw plansError;
+      setPlansHistory(plansData || []);
 
     } catch (err: any) {
       console.error(err);
@@ -159,6 +179,72 @@ const PatientProfile: React.FC = () => {
     }
   };
 
+  const handleGenerateAIPlan = async () => {
+    setAiLoading(true);
+    setError(null);
+    try {
+      const response = await fetch('/api/gerar-plano', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          patientData: {
+            ...patient,
+            idade: patient.data_nascimento ? calculateAge(patient.data_nascimento) : null
+          }, 
+          consultations 
+        })
+      });
+
+      const text = await response.text();
+      console.log("Resposta da API (raw):", text);
+
+      if (!response.ok) {
+        let errorMessage = 'Falha ao gerar plano com IA';
+        try {
+          const errorData = JSON.parse(text);
+          errorMessage = errorData.error || errorMessage;
+        } catch (e) {}
+        throw new Error(errorMessage);
+      }
+
+      const data = JSON.parse(text);
+      setGeneratedPlan(data);
+      setViewingPlan(null);
+    } catch (err: any) {
+      console.error(err);
+      alert('Erro ao gerar plano: ' + err.message);
+    } finally {
+      setAiLoading(false);
+    }
+  };
+
+  const handleSaveAIPlan = async (finalPlan: any) => {
+    setSaveLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from('planos_alimentares')
+        .insert({
+          paciente_id: id,
+          nutricionista_id: user?.id,
+          conteudo: finalPlan
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      setPlansHistory([data, ...plansHistory]);
+      setGeneratedPlan(null);
+      setViewingPlan(data);
+      alert('Plano alimentar salvo com sucesso!');
+    } catch (err: any) {
+      console.error(err);
+      alert('Erro ao salvar plano: ' + err.message);
+    } finally {
+      setSaveLoading(false);
+    }
+  };
+
   const toggleCard = (cardId: string) => {
     setExpandedCards(prev => 
       prev.includes(cardId) 
@@ -179,8 +265,11 @@ const PatientProfile: React.FC = () => {
 
     const lastConsultation = consultations[0];
     
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
     const nextReturn = consultations
-      .filter(c => c.proximo_retorno && new Date(c.proximo_retorno) >= new Date())
+      .filter(c => c.proximo_retorno && new Date(c.proximo_retorno + 'T00:00:00') >= today)
       .sort((a, b) => new Date(a.proximo_retorno).getTime() - new Date(b.proximo_retorno).getTime())[0];
 
     const chartData = consultations.map(c => ({
@@ -196,8 +285,8 @@ const PatientProfile: React.FC = () => {
     const weightDiff = (currentWeight !== null && initialWeight !== null) ? (currentWeight - initialWeight) : null;
 
     return {
-      lastDate: lastConsultation ? new Date(lastConsultation.data_consulta).toLocaleDateString('pt-BR') : '-',
-      nextReturnDate: nextReturn ? new Date(nextReturn.proximo_retorno).toLocaleDateString('pt-BR') : '-',
+      lastDate: lastConsultation ? formatLocalDate(lastConsultation.data_consulta) : '-',
+      nextReturnDate: nextReturn ? formatLocalDate(nextReturn.proximo_retorno) : '-',
       currentWeight,
       initialWeight,
       weightDiff,
@@ -205,25 +294,44 @@ const PatientProfile: React.FC = () => {
     };
   }, [consultations, patient]);
 
-  if (loading) return <div className="dashboard-container"><Sidebar /><main className="main-content">Carregando perfil...</main></div>;
+  if (loading) return (
+    <div className="dashboard-container">
+      <Sidebar />
+      <main className="main-content">
+        <PremiumLoading message="Carregando perfil do paciente..." />
+      </main>
+    </div>
+  );
   if (error) return <div className="dashboard-container"><Sidebar /><main className="main-content"><div className="error-message">{error}</div></main></div>;
 
   return (
     <div className="dashboard-container">
       <Sidebar />
-      <main className="main-content">
-        <header className="page-header">
-          <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-            <button className="btn-icon" onClick={() => navigate('/pacientes')}>
+      <main className="main-content premium-fade-in">
+        <header className="page-header premium-profile-header">
+          <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+            <button onClick={() => navigate('/pacientes')} className="btn-back">
               <ChevronLeft size={24} />
             </button>
             <div>
-              <h1>{patient.nome}</h1>
-              <p>Acompanhamento nutricional</p>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <h1 style={{ margin: 0 }}>{patient.nome}</h1>
+                <span className="badge-premium-gold">
+                  <Target size={14} style={{ marginRight: '6px' }} />
+                  {patient.objetivo_principal || 'Paciente'}
+                </span>
+              </div>
+              <p className="text-muted" style={{ marginTop: '5px' }}>
+                ID: {id?.substring(0, 8)} • Cadastrado em {formatLocalDate(patient.created_at)}
+              </p>
             </div>
           </div>
-          <div className="badge badge-accent">
-            Paciente desde {new Date(patient.created_at).toLocaleDateString('pt-BR')}
+          
+          <div className="header-actions">
+            <button className="btn-secondary" onClick={() => navigate(`/pacientes/editar/${id}`)}>
+              <Edit2 size={18} style={{ marginRight: '8px' }} />
+              Editar Perfil
+            </button>
           </div>
         </header>
 
@@ -361,7 +469,7 @@ const PatientProfile: React.FC = () => {
                     <div className="consultation-summary" onClick={() => toggleCard(c.id)}>
                       <div className="consultation-info">
                         <div className="consultation-date">
-                          {new Date(c.data_consulta).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })}
+                          {formatLocalDate(c.data_consulta, { day: '2-digit', month: 'long', year: 'numeric' })}
                         </div>
                         <div className="consultation-metrics-summary">
                           <span><Scale size={14} /> {c.peso} kg</span>
@@ -408,7 +516,7 @@ const PatientProfile: React.FC = () => {
                             <label>Retorno Agendado</label>
                             <p className="return-date">
                               <Calendar size={16} style={{ marginRight: '8px' }} />
-                              {new Date(c.proximo_retorno).toLocaleDateString('pt-BR')}
+                              {formatLocalDate(c.proximo_retorno)}
                             </p>
                           </div>
                         )}
@@ -426,20 +534,65 @@ const PatientProfile: React.FC = () => {
           <div className="fade-in">
              <div className="section-header">
               <h2>Planos Alimentares</h2>
-              <button className="btn-primary" style={{ width: 'auto' }}>
-                <Plus size={18} style={{ marginRight: '8px' }} />
-                Gerar Plano Alimentar
-              </button>
+              {!generatedPlan && !viewingPlan && (
+                <button 
+                  className="btn-primary" 
+                  style={{ width: 'auto' }} 
+                  onClick={handleGenerateAIPlan}
+                  disabled={aiLoading}
+                >
+                  <Plus size={18} style={{ marginRight: '8px' }} />
+                  {aiLoading ? 'Gerando...' : 'Gerar Plano Alimentar com IA'}
+                </button>
+              )}
+              {(generatedPlan || viewingPlan) && (
+                <button 
+                  className="btn-secondary" 
+                  style={{ width: 'auto' }} 
+                  onClick={() => { setGeneratedPlan(null); setViewingPlan(null); }}
+                >
+                  Voltar ao Histórico
+                </button>
+              )}
             </div>
             
-            <div className="empty-state-large">
-              <ClipboardList size={64} color="#D8E3D2" />
-              <h3>Nenhum plano alimentar gerado ainda</h3>
-              <p>Comece criando um plano personalizado para este paciente.</p>
-              <button className="btn-secondary" style={{ marginTop: '20px' }}>
-                Ver Modelos de Planos
-              </button>
-            </div>
+            {aiLoading && (
+              <div className="empty-state-large">
+                <div className="loading-spinner" style={{ marginBottom: '20px' }}></div>
+                <h3>Gerando plano alimentar personalizado...</h3>
+                <p>Nossa IA está analisando os dados de {patient.nome.split(' ')[0]} para criar a melhor sugestão.</p>
+              </div>
+            )}
+
+            {!aiLoading && generatedPlan && (
+              <MealPlanDisplay 
+                plan={generatedPlan} 
+                onSave={handleSaveAIPlan} 
+                onCancel={() => setGeneratedPlan(null)}
+                loading={saveLoading}
+              />
+            )}
+
+            {!aiLoading && !generatedPlan && viewingPlan && (
+              <div className="viewing-saved-plan">
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                  <span className="badge badge-accent">Plano salvo em {formatLocalDate(viewingPlan.created_at)}</span>
+                </div>
+                <MealPlanDisplay 
+                  plan={viewingPlan.conteudo} 
+                  onSave={async () => { alert('Para editar um plano salvo, gere um novo ou implementaremos a edição em breve.'); }} 
+                  onCancel={() => setViewingPlan(null)}
+                  loading={false}
+                />
+              </div>
+            )}
+
+            {!aiLoading && !generatedPlan && !viewingPlan && (
+              <MealPlanHistory 
+                plans={plansHistory} 
+                onSelect={(p) => setViewingPlan(p)} 
+              />
+            )}
           </div>
         )}
 

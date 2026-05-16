@@ -1,5 +1,6 @@
 import React from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { formatLocalDate } from '../utils/dateUtils';
 
 interface EvolutionChartProps {
   data: any[];
@@ -32,7 +33,7 @@ const EvolutionChart: React.FC<EvolutionChartProps> = ({
   // Formatar datas para exibição
   const chartData = filteredData.map(item => ({
     ...item,
-    formattedDate: new Date(item.date).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })
+    formattedDate: formatLocalDate(item.date, { day: '2-digit', month: '2-digit' })
   }));
 
   return (

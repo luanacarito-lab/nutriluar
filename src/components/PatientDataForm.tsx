@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, Save, User, Activity, Clock } from 'lucide-react';
+import { calculateAge } from '../utils/dateUtils';
 
 interface PatientDataFormProps {
   initialData?: any;
@@ -58,15 +59,7 @@ const PatientDataForm: React.FC<PatientDataFormProps> = ({
   }, [initialData]);
 
   const age = useMemo(() => {
-    if (!formData.data_nascimento) return null;
-    const birthDate = new Date(formData.data_nascimento);
-    const today = new Date();
-    let age = today.getFullYear() - birthDate.getFullYear();
-    const m = today.getMonth() - birthDate.getMonth();
-    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
-      age--;
-    }
-    return age;
+    return calculateAge(formData.data_nascimento);
   }, [formData.data_nascimento]);
 
   const parseNumber = (val: string): number => {

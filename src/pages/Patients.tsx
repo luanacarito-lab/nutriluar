@@ -5,6 +5,7 @@ import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import Sidebar from '../components/Sidebar';
 import Badge from '../components/Badge';
+import { formatLocalDate } from '../utils/dateUtils';
 
 const Patients: React.FC = () => {
   const { user } = useAuth();
@@ -31,14 +32,15 @@ const Patients: React.FC = () => {
 
       // Processar dados para pegar a última consulta e objetivos principais
       const processed = (data || []).map(p => {
-        const lastConsultation = p.consultas?.sort((a: any, b: any) => 
+        const sortedConsultations = [...(p.consultas || [])].sort((a: any, b: any) => 
           new Date(b.data_consulta).getTime() - new Date(a.data_consulta).getTime()
-        )[0];
+        );
+        const lastConsultation = sortedConsultations[0];
 
         return {
           ...p,
           ultima_consulta: lastConsultation?.data_consulta,
-          objetivo_principal: p.objetivos?.[0] || 'Saúde Geral'
+          objetivo_principal: (p.objetivos && p.objetivos.length > 0) ? p.objetivos[0] : 'Saúde Geral'
         };
       });
 
@@ -51,7 +53,7 @@ const Patients: React.FC = () => {
   };
 
   const filteredPatients = patients.filter(p => 
-    p.nome.toLowerCase().includes(searchTerm.toLowerCase())
+    (p.nome || '').toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -112,7 +114,7 @@ const Patients: React.FC = () => {
                     </td>
                     <td>
                       {p.ultima_consulta 
-                        ? new Date(p.ultima_consulta).toLocaleDateString('pt-BR') 
+                        ? formatLocalDate(p.ultima_consulta) 
                         : 'Nenhuma registrada'}
                     </td>
                   </tr>

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronRight } from 'lucide-react';
+import { formatLocalDate } from '../utils/dateUtils';
 
 interface Patient {
   id: string;
@@ -30,7 +31,7 @@ const PatientListCard: React.FC<PatientListCardProps> = ({ patients, loading }) 
                 <span>{patient.nome}</span>
                 {patient.ultima_consulta && (
                   <span className="patient-date">
-                    Última consulta: {new Date(patient.ultima_consulta).toLocaleDateString('pt-BR')}
+                    Última consulta: {formatLocalDate(patient.ultima_consulta)}
                   </span>
                 )}
               </Link>

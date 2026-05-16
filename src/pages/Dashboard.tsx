@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabase';
 import Sidebar from '../components/Sidebar';
 import StatCard from '../components/StatCard';
 import PatientListCard from '../components/PatientListCard';
+import { formatLocalDate, getTodayString } from '../utils/dateUtils';
 
 const Dashboard: React.FC = () => {
   const { user } = useAuth();
@@ -38,20 +39,34 @@ const Dashboard: React.FC = () => {
         .select('*', { count: 'exact', head: true })
         .eq('nutricionista_id', user?.id);
 
-      // 3. Consultas da semana
-      const now = new Date();
-      const firstDayOfWeek = new Date(now.setDate(now.getDate() - now.getDay() + (now.getDay() === 0 ? -6 : 1))); // Segunda
-      firstDayOfWeek.setHours(0, 0, 0, 0);
-      const lastDayOfWeek = new Date(firstDayOfWeek);
-      lastDayOfWeek.setDate(lastDayOfWeek.getDate() + 6); // Domingo
-      lastDayOfWeek.setHours(23, 59, 59, 999);
+      // 3. Consultas da semana (segunda a domingo)
+      const today = new Date();
+      const currentDay = today.getDay(); // 0 (Dom) a 6 (Sab)
+      
+      // Calcular segunda-feira da semana atual
+      const monday = new Date(today);
+      const diffToMonday = currentDay === 0 ? -6 : 1 - currentDay;
+      monday.setDate(today.getDate() + diffToMonday);
+      monday.setHours(0, 0, 0, 0);
+      
+      // Calcular domingo da semana atual
+      const sunday = new Date(monday);
+      sunday.setDate(monday.getDate() + 6);
+      sunday.setHours(23, 59, 59, 999);
+
+      const formatDateForQuery = (date: Date) => {
+        const y = date.getFullYear();
+        const m = String(date.getMonth() + 1).padStart(2, '0');
+        const d = String(date.getDate()).padStart(2, '0');
+        return `${y}-${m}-${d}`;
+      };
 
       const { count: consultationsCount } = await supabase
         .from('consultas')
         .select('id, pacientes!inner(nutricionista_id)', { count: 'exact', head: true })
         .eq('pacientes.nutricionista_id', user?.id)
-        .gte('data_consulta', firstDayOfWeek.toISOString().split('T')[0])
-        .lte('data_consulta', lastDayOfWeek.toISOString().split('T')[0]);
+        .gte('data_consulta', formatDateForQuery(monday))
+        .lte('data_consulta', formatDateForQuery(sunday));
 
       // 4. Pacientes sem retorno
       // Buscamos pacientes e suas consultas
@@ -76,7 +91,7 @@ const Dashboard: React.FC = () => {
 
           const lastDate = new Date(lastConsultation.data_consulta);
           const hasFutureReturn = sortedConsultations.some((c: any) => 
-            c.proximo_retorno && new Date(c.proximo_retorno) >= new Date()
+            c.proximo_retorno && new Date(c.proximo_retorno + 'T00:00:00') >= new Date()
           );
 
           if (lastDate < thirtyDaysAgo && !hasFutureReturn) {
